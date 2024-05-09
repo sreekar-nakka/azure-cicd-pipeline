@@ -1,15 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="7663356a-e1fc-4fad-a60e-5fdf0f425b14" >
 		<http:listener-connection host="0.0.0.0" port="8081" />
 	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="ff25e6da-706d-4c8d-89fa-434f0ba7af34" >
+		<http:request-connection host="dummy.restapiexample.com" />
+	</http:request-config>
 	<flow name="azure-cicd-pipeline-flow" doc:id="f2d8962d-b7da-4e88-9136-78bb6eb9413e" >
 		<http:listener doc:name="Listener" doc:id="086537cc-1f07-49cf-bba6-ad8ea5a222be" config-ref="HTTP_Listener_config" path="/azurecicd"/>
-		<set-payload value='#["This is Azure CI/CD Pipeline"]' doc:name="Set Payload" doc:id="afeb7396-7a2d-4fc4-8429-26568e107f2a" />
-		<logger level="INFO" doc:name="Logger" doc:id="6c1c91bc-154d-4a92-9a8f-bbb967168c0e" message="#[payload]"/>
+		<logger level="INFO" doc:name="START" doc:id="5e3ed5e6-1704-4e1f-acbf-77c401f8f0b9" message='#[output json&#10;---&#10;{&#10;    flow: "Start of flow :" ++ flow.name,&#10;    message: "azure-cicd-pipeline-flow Started"&#10;    &#10;}]'/>
+		<http:request method="GET" doc:name="Request : GET/employees" doc:id="f328b528-f82c-4fed-82af-aa065db1ad5e" config-ref="HTTP_Request_configuration" path="/api/v1/employees"/>
+		<ee:transform doc:name="payload" doc:id="e24faf3a-4c99-49e7-b060-334418b74059" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="END" doc:id="6c1c91bc-154d-4a92-9a8f-bbb967168c0e" message='#[output json&#10;---&#10;{&#10;    flow: "End of flow :" ++ flow.name,&#10;    message: "azure-cicd-pipeline-flow Ended"&#10;    &#10;}]'/>
 	</flow>
 </mule>

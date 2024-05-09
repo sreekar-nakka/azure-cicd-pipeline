@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="7663356a-e1fc-4fad-a60e-5fdf0f425b14" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="azure-cicd-pipeline-flow" doc:id="f2d8962d-b7da-4e88-9136-78bb6eb9413e" >
+		<http:listener doc:name="Listener" doc:id="086537cc-1f07-49cf-bba6-ad8ea5a222be" config-ref="HTTP_Listener_config" path="/azurecicd"/>
+		<set-payload value='#["This is Azure CI/CD Pipeline"]' doc:name="Set Payload" doc:id="afeb7396-7a2d-4fc4-8429-26568e107f2a" />
+		<logger level="INFO" doc:name="Logger" doc:id="6c1c91bc-154d-4a92-9a8f-bbb967168c0e" message="#[payload]"/>
+	</flow>
+</mule>
